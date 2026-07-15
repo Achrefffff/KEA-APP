@@ -62,6 +62,12 @@ export default function App() {
           </div>
         </Tabs>
       </Page>
+      
+      {/* Signature animée */}
+      <div className="signature-footer">
+        <span>Created By Achraf</span>
+        <span className="signature-dot" />
+      </div>
     </AppProvider>
   );
 }
