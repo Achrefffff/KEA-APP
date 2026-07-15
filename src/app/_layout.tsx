@@ -18,8 +18,8 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
-  const notificationListener = useRef<Notifications.EventSubscription>();
-  const responseListener = useRef<Notifications.EventSubscription>();
+  const notificationListener = useRef<Notifications.EventSubscription | undefined>(undefined);
+  const responseListener = useRef<Notifications.EventSubscription | undefined>(undefined);
 
   const [fontsLoaded] = useFonts({
     ...Ionicons.font,
@@ -36,15 +36,16 @@ export default function RootLayout() {
 
     // Écouter quand l'utilisateur clique sur une notification
     responseListener.current = addNotificationResponseListener((response) => {
-      const data = response.notification.request.content.data;
+      const data = response.notification.request.content.data as any;
       console.log('👆 Notification cliquée, data:', data);
 
       if (data && data.redirectType) {
         if (data.redirectType === 'product' && data.redirectId) {
           // Si l'ID est sous format numérique REST, on le convertit en GID attendu par le GraphQL Storefront
-          const productGid = data.redirectId.startsWith('gid://')
-            ? data.redirectId
-            : `gid://shopify/Product/${data.redirectId}`;
+          const redirectIdStr = String(data.redirectId);
+          const productGid = redirectIdStr.startsWith('gid://')
+            ? redirectIdStr
+            : `gid://shopify/Product/${redirectIdStr}`;
           
           console.log('🚀 Navigation vers le produit:', productGid);
           router.push(`/product/${encodeURIComponent(productGid)}`);
