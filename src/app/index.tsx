@@ -1,98 +1,111 @@
-import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
+import React from 'react';
+import { StyleSheet, View, Text, Pressable } from 'react-native';
+import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Image } from 'expo-image';
+import { Button } from '@/components/ui/Button';
 
-import { AnimatedIcon } from '@/components/animated-icon';
-import { HintRow } from '@/components/hint-row';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+export default function WelcomeScreen() {
+  const router = useRouter();
 
-function getDevMenuHint() {
-  if (Platform.OS === 'web') {
-    return <ThemedText type="small">use browser devtools</ThemedText>;
-  }
-  if (Device.isDevice) {
-    return (
-      <ThemedText type="small">
-        shake device or press <ThemedText type="code">m</ThemedText> in terminal
-      </ThemedText>
-    );
-  }
-  const shortcut = Platform.OS === 'android' ? 'cmd+m (or ctrl+m)' : 'cmd+d';
+  const handleGuest = () => {
+    // @ts-ignore
+    router.replace('/(tabs)');
+  };
+
   return (
-    <ThemedText type="small">
-      press <ThemedText type="code">{shortcut}</ThemedText>
-    </ThemedText>
-  );
-}
-
-export default function HomeScreen() {
-  return (
-    <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.heroSection}>
-          <AnimatedIcon />
-          <ThemedText type="title" style={styles.title}>
-            Welcome to&nbsp;Expo
-          </ThemedText>
-        </ThemedView>
-
-        <ThemedText type="code" style={styles.code}>
-          get started
-        </ThemedText>
-
-        <ThemedView type="backgroundElement" style={styles.stepContainer}>
-          <HintRow
-            title="Try editing"
-            hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
+    <View style={styles.container}>
+      <SafeAreaView style={styles.content} edges={['top', 'bottom']}>
+        <View style={styles.topSection}>
+          <Image 
+            source={require('@/assets/images/KEA_NOIR_SANS_FOND-_3.png')} 
+            style={styles.logo}
+            contentFit="contain"
           />
-          <HintRow title="Dev tools" hint={getDevMenuHint()} />
-          <HintRow
-            title="Fresh start"
-            hint={<ThemedText type="code">npm run reset-project</ThemedText>}
-          />
-        </ThemedView>
+        </View>
 
-        {Platform.OS === 'web' && <WebBadge />}
+        <View style={styles.bottomSection}>
+          <Text style={styles.title}>Révélez votre beauté naturelle.</Text>
+          <Text style={styles.subtitle}>
+            Découvrez notre gamme exclusive de soins capillaires, pensés pour vous.
+          </Text>
+          
+          <Button 
+            label="Se connecter" 
+            onPress={() => router.push('/auth/login' as any)}
+            style={styles.loginButton}
+            textStyle={{ color: '#fff' }}
+          />
+
+          <Button 
+            label="Créer un compte" 
+            variant="outline"
+            onPress={() => router.push('/auth/register' as any)}
+            style={styles.registerButton}
+            textStyle={{ color: '#000' }}
+          />
+
+          <Pressable onPress={handleGuest} style={styles.guestLink}>
+            <Text style={styles.guestText}>Continuer en tant qu'invité</Text>
+          </Pressable>
+        </View>
       </SafeAreaView>
-    </ThemedView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    flexDirection: 'row',
+    backgroundColor: '#ffffff',
   },
-  safeArea: {
+  content: {
     flex: 1,
-    paddingHorizontal: Spacing.four,
-    alignItems: 'center',
-    gap: Spacing.three,
-    paddingBottom: BottomTabInset + Spacing.three,
-    maxWidth: MaxContentWidth,
+    paddingHorizontal: 24,
+    justifyContent: 'space-between',
   },
-  heroSection: {
+  topSection: {
     alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    gap: Spacing.four,
+    marginTop: 40,
+  },
+  logo: {
+    width: 120,
+    height: 60,
+  },
+  bottomSection: {
+    paddingBottom: 40,
   },
   title: {
-    textAlign: 'center',
+    fontSize: 40,
+    fontWeight: '800',
+    color: '#000000',
+    marginBottom: 16,
+    lineHeight: 46,
   },
-  code: {
-    textTransform: 'uppercase',
+  subtitle: {
+    fontSize: 16,
+    color: '#666666',
+    marginBottom: 32,
+    lineHeight: 24,
   },
-  stepContainer: {
-    gap: Spacing.three,
-    alignSelf: 'stretch',
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.four,
-    borderRadius: Spacing.four,
+  loginButton: {
+    backgroundColor: '#000000',
+    marginBottom: 12,
+  },
+  registerButton: {
+    borderColor: '#000000',
+    borderWidth: 1,
+    backgroundColor: 'transparent',
+    marginBottom: 16,
+  },
+  guestLink: {
+    alignItems: 'center',
+    paddingVertical: 8,
+  },
+  guestText: {
+    fontSize: 14,
+    color: '#666666',
+    textDecorationLine: 'underline',
   },
 });
+

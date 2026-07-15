@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "132842544109",
+    "project_id": "sustained-hold-400914",
+    "storage_bucket": "sustained-hold-400914.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:132842544109:android:5d2d184ab00e9be3a8a5e4",
+        "android_client_info": {
+          "package_name": "com.achraf.keashop"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCX6K8Vhenwj8w_z_7ZovG_9IFXWUCbJtU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
