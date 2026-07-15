@@ -13,6 +13,7 @@
     "@shopify/app-bridge-react": "^4.2.11",
     "@shopify/polaris": "^13.9.5",
     "firebase": "^12.16.0",
+    "firebase-admin": "^12.1.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "react-router-dom": "^7.18.1"
