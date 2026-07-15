@@ -1,5 +1,5 @@
 "use client";
-import { DarkTheme, DefaultTheme, ThemeProvider, Stack } from 'expo-router';
+import { router, DarkTheme, DefaultTheme, ThemeProvider, Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useColorScheme } from 'react-native';
 import { useFonts } from 'expo-font';
@@ -39,10 +39,20 @@ export default function RootLayout() {
       const data = response.notification.request.content.data;
       console.log('👆 Notification cliquée, data:', data);
 
-      // Exemple futur : naviguer vers un produit
-      // if (data.productId) {
-      //   router.push(`/product/${data.productId}`);
-      // }
+      if (data && data.redirectType) {
+        if (data.redirectType === 'product' && data.redirectId) {
+          // Si l'ID est sous format numérique REST, on le convertit en GID attendu par le GraphQL Storefront
+          const productGid = data.redirectId.startsWith('gid://')
+            ? data.redirectId
+            : `gid://shopify/Product/${data.redirectId}`;
+          
+          console.log('🚀 Navigation vers le produit:', productGid);
+          router.push(`/product/${encodeURIComponent(productGid)}`);
+        } else if (data.redirectType === 'collection' && data.redirectId) {
+          console.log('🚀 Navigation vers la collection handle:', data.redirectId);
+          router.push(`/collection/${data.redirectId}`);
+        }
+      }
     });
 
     return () => {

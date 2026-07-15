@@ -4,6 +4,7 @@ import {
   Checkbox, Button, Banner, Card, BlockStack, InlineStack 
 } from '@shopify/polaris';
 import { useProducts } from '../hooks/useProducts';
+import { useCollections } from '../hooks/useCollections';
 import { useNotifications } from '../hooks/useNotifications';
 import type { NotificationPayload } from '../services/api';
 
@@ -18,6 +19,7 @@ export const NotificationForm: React.FC<NotificationFormProps> = ({
   title, setTitle, body, setBody
 }) => {
   const { products, loading: productsLoading } = useProducts();
+  const { collections, loading: collectionsLoading } = useCollections();
   const { send, submitting, success, error, clearStatus } = useNotifications();
 
   // États locaux du formulaire
@@ -41,6 +43,12 @@ export const NotificationForm: React.FC<NotificationFormProps> = ({
   const productOptions = [
     { label: 'Sélectionner un produit...', value: '' },
     ...products.map(p => ({ label: p.title, value: p.id }))
+  ];
+
+  // Options pour les collections
+  const collectionOptions = [
+    { label: 'Sélectionner une collection...', value: '' },
+    ...collections.map(c => ({ label: c.title, value: c.handle }))
   ];
 
   const handleSubmit = async () => {
@@ -112,10 +120,19 @@ export const NotificationForm: React.FC<NotificationFormProps> = ({
               </InlineStack>
             </BlockStack>
 
-            <Select label="Action au clic" options={redirectOptions} value={redirectType} onChange={(val) => setRedirectType(val as any)} />
+            <Select 
+              label="Action au clic" 
+              options={redirectOptions} 
+              value={redirectType} 
+              onChange={(val) => { setRedirectType(val as any); setRedirectId(''); }} 
+            />
 
             {redirectType === 'product' && (
               <Select label="Sélectionner le produit" options={productOptions} value={redirectId} onChange={setRedirectId} disabled={productsLoading} />
+            )}
+
+            {redirectType === 'collection' && (
+              <Select label="Sélectionner la collection" options={collectionOptions} value={redirectId} onChange={setRedirectId} disabled={collectionsLoading} />
             )}
 
             <TextField label="URL de l'image de la bannière (Optionnel)" value={imageUrl} onChange={setImageUrl} autoComplete="off" placeholder="https://mon-image.png" />

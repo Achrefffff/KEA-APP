@@ -5,12 +5,18 @@ export interface ShopifyProduct {
   handle: string;
 }
 
+export interface ShopifyCollection {
+  id: string;
+  title: string;
+  handle: string;
+}
+
 export interface NotificationPayload {
   title: string;
   body: string;
   target: 'all' | 'android' | 'ios';
   redirectType: 'home' | 'product' | 'collection';
-  redirectId?: string; // ID du produit ou de la collection
+  redirectId?: string; // ID du produit ou handle de la collection
   imageUrl?: string;
   scheduledAt?: string; // Date ISO si planifié
 }
@@ -37,6 +43,9 @@ async function fetchApi<T>(path: string, options?: RequestInit): Promise<T> {
 export const apiService = {
   // Récupérer les produits pour la sélection dans le formulaire
   getProducts: () => fetchApi<ShopifyProduct[]>('/api/products'),
+
+  // Récupérer les collections pour la sélection dans le formulaire
+  getCollections: () => fetchApi<ShopifyCollection[]>('/api/collections'),
 
   // Envoyer ou planifier une notification push
   sendNotification: (payload: NotificationPayload) => 
