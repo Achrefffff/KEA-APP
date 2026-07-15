@@ -95,6 +95,14 @@ export default async function handler(
       title,
       body,
       data: { redirectType, redirectId, imageUrl },
+      ...(imageUrl ? {
+        android: {
+          imageUrl: imageUrl,
+        },
+        ios: {
+          attachments: [{ url: imageUrl }],
+        },
+      } : {}),
     }));
 
     // Envoi par lots de 100 max (limite API Expo)

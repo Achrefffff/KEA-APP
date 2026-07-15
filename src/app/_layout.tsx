@@ -48,10 +48,16 @@ export default function RootLayout() {
             : `gid://shopify/Product/${redirectIdStr}`;
           
           console.log('🚀 Navigation vers le produit:', productGid);
-          router.push(`/product/${encodeURIComponent(productGid)}`);
+          // Attendre un court instant que l'arbre de navigation de l'app soit prêt
+          setTimeout(() => {
+            router.push(`/product/${encodeURIComponent(productGid)}`);
+          }, 500);
         } else if (data.redirectType === 'collection' && data.redirectId) {
           console.log('🚀 Navigation vers la collection handle:', data.redirectId);
-          router.push(`/collection/${data.redirectId}`);
+          // Attendre un court instant que l'arbre de navigation de l'app soit prêt
+          setTimeout(() => {
+            router.push(`/collection/${data.redirectId}`);
+          }, 500);
         }
       }
     });

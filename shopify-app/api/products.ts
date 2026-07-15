@@ -24,7 +24,7 @@ export default async function handler(
 
   try {
     // Appeler l'API REST Shopify Admin
-    const url = `https://${shopifyDomain}/admin/api/2026-07/products.json?fields=id,title,handle,images&limit=50`;
+    const url = `https://${shopifyDomain}/admin/api/2026-07/products.json?fields=id,title,handle,images&limit=250`;
     
     const shopifyResponse = await fetch(url, {
       headers: {

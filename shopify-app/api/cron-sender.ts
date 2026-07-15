@@ -70,6 +70,14 @@ export default async function handler(
               redirectId: notif.redirectId, 
               imageUrl: notif.imageUrl 
             },
+            ...(notif.imageUrl ? {
+              android: {
+                imageUrl: notif.imageUrl,
+              },
+              ios: {
+                attachments: [{ url: notif.imageUrl }],
+              },
+            } : {}),
           }));
 
           // Envoi par lots de 100 max (limite API Expo)
