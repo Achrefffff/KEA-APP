@@ -28,6 +28,7 @@ export const NotificationForm: React.FC<NotificationFormProps> = ({
   const [isScheduled, setIsScheduled] = useState(false);
   const [scheduledDate, setScheduledDate] = useState('');
   const [scheduledTime, setScheduledTime] = useState('');
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   // Options pour le sélecteur de redirection
   const redirectOptions = [
@@ -44,6 +45,7 @@ export const NotificationForm: React.FC<NotificationFormProps> = ({
 
   const handleSubmit = async () => {
     clearStatus();
+    setIsSubmitted(true);
     
     // Validation simple
     if (!title || !body) return;
@@ -71,6 +73,7 @@ export const NotificationForm: React.FC<NotificationFormProps> = ({
       setRedirectId('');
       setImageUrl('');
       setIsScheduled(false);
+      setIsSubmitted(false);
     }
   };
 
@@ -82,8 +85,23 @@ export const NotificationForm: React.FC<NotificationFormProps> = ({
 
         <Form onSubmit={handleSubmit}>
           <FormLayout>
-            <TextField label="Titre de la notification" value={title} onChange={setTitle} autoComplete="off" placeholder="ex: 🔥 Vente Flash !" error={!title && 'Le titre est requis'} />
-            <TextField label="Message (corps)" value={body} onChange={setBody} autoComplete="off" multiline={3} placeholder="ex: Profitez de -20% sur tout la boutique aujourd'hui." error={!body && 'Le message est requis'} />
+            <TextField 
+              label="Titre de la notification" 
+              value={title} 
+              onChange={(val) => { setTitle(val); if (isSubmitted) setIsSubmitted(false); }} 
+              autoComplete="off" 
+              placeholder="ex: 🔥 Vente Flash !" 
+              error={isSubmitted && !title ? 'Le titre est requis' : undefined} 
+            />
+            <TextField 
+              label="Message (corps)" 
+              value={body} 
+              onChange={(val) => { setBody(val); if (isSubmitted) setIsSubmitted(false); }} 
+              autoComplete="off" 
+              multiline={3} 
+              placeholder="ex: Profitez de -20% sur tout la boutique aujourd'hui." 
+              error={isSubmitted && !body ? 'Le message est requis' : undefined} 
+            />
             
             <BlockStack gap="200">
               <span style={{ fontSize: '13px', fontWeight: 500 }}>Ciblage des appareils</span>
