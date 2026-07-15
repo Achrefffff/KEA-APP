@@ -53,12 +53,24 @@ export default async function handler(
       collections = [...collections, ...(data.smart_collections || [])];
     }
 
-    // Formater et dédoublonner
-    const formattedCollections = collections.map((c: any) => ({
-      id: String(c.id),
-      title: c.title,
-      handle: c.handle,
-    }));
+    // Liste des handles de collections actives dans l'application mobile
+    const ACTIVE_HANDLES = [
+      'curly',
+      'chantilly',
+      'kids-routines-capillaires',
+      'shampoings-1',
+      'nos-serums',
+      'nos-curly'
+    ];
+
+    // Formater, dédoublonner et filtrer par les collections actives dans l'application mobile
+    const formattedCollections = collections
+      .filter((c: any) => ACTIVE_HANDLES.includes(c.handle))
+      .map((c: any) => ({
+        id: String(c.id),
+        title: c.title,
+        handle: c.handle,
+      }));
 
     return response.status(200).json(formattedCollections);
   } catch (error) {

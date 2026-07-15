@@ -1,9 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { 
-  Card, IndexTable, Badge, Button, BlockStack, Text, Spinner 
+  Card, IndexTable, Badge, Button, BlockStack, Text, Spinner, InlineStack 
 } from '@shopify/polaris';
-import { collection, query, orderBy, limit, onSnapshot, deleteDoc, doc } from 'firebase/firestore';
-import { db } from '../services/firebase';
 
 interface NotificationHistoryItem {
   id: string;
@@ -18,33 +16,38 @@ interface NotificationHistoryItem {
 export const NotificationHistory: React.FC = () => {
   const [notifications, setNotifications] = useState<NotificationHistoryItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const fetchHistory = useCallback(async (isRefresh = false) => {
+    if (isRefresh) setRefreshing(true);
+    else setLoading(true);
+
+    try {
+      const res = await fetch('/api/history');
+      if (!res.ok) throw new Error('Erreur serveur lors du chargement de l\'historique');
+      const data = await res.json();
+      setNotifications(data);
+    } catch (error) {
+      console.error('Erreur chargement historique:', error);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  }, []);
 
   useEffect(() => {
-    // Écouteur en temps réel sur la collection Firestore
-    const q = query(
-      collection(db, 'scheduled_notifications'), 
-      orderBy('createdAt', 'desc'), 
-      limit(20)
-    );
-
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const list: NotificationHistoryItem[] = [];
-      snapshot.forEach((doc) => {
-        list.push({ id: doc.id, ...doc.data() } as NotificationHistoryItem);
-      });
-      setNotifications(list);
-      setLoading(false);
-    }, (error) => {
-      console.error('Erreur écoute notifications history:', error);
-      setLoading(false);
-    });
-
-    return () => unsubscribe();
-  }, []);
+    fetchHistory();
+  }, [fetchHistory]);
 
   const handleDelete = async (id: string) => {
     try {
-      await deleteDoc(doc(db, 'scheduled_notifications', id));
+      const res = await fetch(`/api/history?id=${id}`, {
+        method: 'DELETE',
+      });
+      if (!res.ok) throw new Error('Erreur lors de la suppression');
+      
+      // Mettre à jour la liste locale
+      setNotifications(prev => prev.filter(n => n.id !== id));
       console.log('Notification supprimée de la file d\'attente');
     } catch (error) {
       console.error('Erreur lors de la suppression de la notification :', error);
@@ -94,7 +97,16 @@ export const NotificationHistory: React.FC = () => {
   return (
     <Card>
       <BlockStack gap="400">
-        <Text variant="headingMd" as="h2">Historique des notifications</Text>
+        <InlineStack align="space-between">
+          <Text variant="headingMd" as="h2">Historique des notifications</Text>
+          <Button 
+            size="slim" 
+            onClick={() => fetchHistory(true)} 
+            loading={refreshing}
+          >
+            Rafraîchir
+          </Button>
+        </InlineStack>
 
         {loading ? (
           <div style={{ textAlign: 'center', padding: '20px' }}>
